@@ -11,7 +11,10 @@ export function Timer({ isRunning, onTimeUpdate }: TimerProps) {
   const [time, setTime] = useState(0);
 
   useEffect(() => {
-    if (!isRunning) return;
+    if (!isRunning) {
+      setTime(0);
+      return;
+    }
 
     const startTime = Date.now() - time * 1000;
     const interval = setInterval(() => {
@@ -23,12 +26,6 @@ export function Timer({ isRunning, onTimeUpdate }: TimerProps) {
     return () => clearInterval(interval);
   }, [isRunning, time, onTimeUpdate]);
 
-  useEffect(() => {
-    if (!isRunning) {
-      setTime(0);
-    }
-  }, [isRunning]);
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -36,9 +33,9 @@ export function Timer({ isRunning, onTimeUpdate }: TimerProps) {
   };
 
   return (
-    <Card className="px-4 py-3 flex items-center gap-3">
-      <TimerIcon className="text-primary" weight="fill" />
-      <span className="font-semibold text-lg font-mono tabular-nums">
+    <Card className="px-6 py-3 bg-card flex items-center gap-3">
+      <TimerIcon size={24} className="text-primary" />
+      <span className="text-2xl font-bold font-mono text-foreground">
         {formatTime(time)}
       </span>
     </Card>
