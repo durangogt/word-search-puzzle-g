@@ -4,7 +4,7 @@ import { WordSearchGrid } from '@/components/WordSearchGrid';
 import { WordBank } from '@/components/WordBank';
 import { CompletionDialog } from '@/components/CompletionDialog';
 import { generateWordSearch, type WordSearchPuzzle } from '@/lib/wordSearchGenerator';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowCounterClockwise } from '@phosphor-icons/react';
@@ -53,58 +53,61 @@ function App() {
   }, [foundWords, words.length, showCompletion]);
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
-      <AnimatePresence mode="wait">
-        {!puzzle ? (
-          <motion.div
-            key="input"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center justify-center min-h-[80vh]"
-          >
-            <WordInput onGenerate={handleGenerate} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="puzzle"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="max-w-7xl mx-auto"
-          >
-            <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Word Search Game
-              </h1>
-              <Button
-                onClick={handleNewPuzzle}
-                variant="outline"
-                size="lg"
-                className="font-semibold uppercase tracking-wide"
-              >
-                <ArrowCounterClockwise className="mr-2" />
-                New Puzzle
-              </Button>
-            </div>
+    <>
+      <Toaster position="top-center" richColors />
+      <div className="min-h-screen bg-background py-8 px-4">
+        <AnimatePresence mode="wait">
+          {!puzzle ? (
+            <motion.div
+              key="input"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="flex items-center justify-center min-h-[80vh]"
+            >
+              <WordInput onGenerate={handleGenerate} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="puzzle"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-7xl mx-auto"
+            >
+              <div className="mb-6 flex items-center justify-between">
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                  Word Search Game
+                </h1>
+                <Button
+                  onClick={handleNewPuzzle}
+                  variant="outline"
+                  size="lg"
+                  className="font-semibold uppercase tracking-wide"
+                >
+                  <ArrowCounterClockwise className="mr-2" />
+                  New Puzzle
+                </Button>
+              </div>
 
-            <div className="grid lg:grid-cols-[1fr_300px] xl:grid-cols-[1fr_350px] gap-6">
-              <WordSearchGrid
-                grid={puzzle.grid}
-                placedWords={puzzle.placedWords}
-                onWordFound={handleWordFound}
-                foundWords={foundWords}
-              />
-              <WordBank words={words} foundWords={foundWords} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="grid lg:grid-cols-[1fr_300px] xl:grid-cols-[1fr_350px] gap-6">
+                <WordSearchGrid
+                  grid={puzzle.grid}
+                  placedWords={puzzle.placedWords}
+                  onWordFound={handleWordFound}
+                  foundWords={foundWords}
+                />
+                <WordBank words={words} foundWords={foundWords} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <CompletionDialog open={showCompletion} onNewPuzzle={handleNewPuzzle} />
-    </div>
+        <CompletionDialog open={showCompletion} onNewPuzzle={handleNewPuzzle} />
+      </div>
+    </>
   );
 }
 
