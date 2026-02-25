@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Timer as TimerIcon } from '@phospho
 import { Timer as TimerIcon } from '@phosphor-icons/react';
 
-interface TimerProps {
+
   isRunning: boolean;
   onTimeUpdate: (time: number) => void;
 }
@@ -10,15 +10,15 @@ interface TimerProps {
 export function Timer({ isRunning, onTimeUpdate }: TimerProps) {
   const [time, setTime] = useState(0);
 
-  useEffect(() => {
+
     if (!isRunning) return;
 
     const startTime = Date.now() - time * 1000;
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      setTime(elapsed);
+      </span>
       onTimeUpdate(elapsed);
-    }, 1000);
+
 
     return () => clearInterval(interval);
   }, [isRunning, time, onTimeUpdate]);
@@ -34,7 +34,7 @@ export function Timer({ isRunning, onTimeUpdate }: TimerProps) {
       <TimerIcon size={24} className="text-primary" />
       <span className="text-lg font-semibold font-mono text-foreground">
         {formatTime(time)}
-      </span>
+
     </Card>
-  );
+
 }
