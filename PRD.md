@@ -13,11 +13,11 @@ A dynamic word search puzzle game where users create custom puzzles by entering 
 ## Essential Features
 
 ### Word Input Interface
-- **Functionality**: Accept a list of words from the user (comma-separated or line-separated)
-- **Purpose**: Allow users to personalize puzzles with themed words (holidays, vocabulary, names, etc.)
+- **Functionality**: Accept a list of words from the user (comma-separated or line-separated) OR allow selection from predefined themed word lists (animals, sports, food, nature, space, colors, weather, music, ocean, vehicles, fruits, countries)
+- **Purpose**: Allow users to quickly start a themed puzzle or personalize puzzles with custom words (holidays, vocabulary, names, etc.)
 - **Trigger**: Initial app load or "Create New Puzzle" button
-- **Progression**: Empty input field → User types words → Validates input → Generates puzzle → Shows game board
-- **Success criteria**: Minimum 3 words accepted, maximum 15 words, words between 3-12 characters, displays helpful validation messages
+- **Progression**: Theme selection view OR custom input → User selects theme or types words → Validates input (custom only) → Generates puzzle → Shows game board
+- **Success criteria**: 12 themed categories with descriptive icons, minimum 3 words accepted for custom, maximum 15 words, words between 3-12 characters, displays helpful validation messages, smooth tab switching between themed and custom modes
 
 ### Puzzle Grid Generation
 - **Functionality**: Generate a grid (12x12 to 15x15) with user words placed in 8 directions (horizontal, vertical, diagonal - all forwards and backwards), fill remaining cells with random letters
