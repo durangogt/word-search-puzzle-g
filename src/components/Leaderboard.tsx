@@ -9,7 +9,7 @@ import {
   Timer as TimerIcon, 
   Hash 
 } from '@phosphor-icons/react';
-import { useKV } from '@github/spark/hooks';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface LeaderboardEntry {
@@ -24,7 +24,7 @@ type SortField = 'name' | 'time' | 'wordCount';
 type SortDirection = 'asc' | 'desc';
 
 export function Leaderboard() {
-  const [entries] = useKV<LeaderboardEntry[]>('leaderboard-entries', []);
+  const [entries] = useLocalStorage<LeaderboardEntry[]>('leaderboard-entries', []);
   const [sortField, setSortField] = useState<SortField>('time');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
