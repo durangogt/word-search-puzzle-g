@@ -18,7 +18,7 @@ export function Timer({ isRunning, onTimeUpdate }: TimerProps) {
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
       setTime(elapsed);
       onTimeUpdate(elapsed);
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(interval);
   }, [isRunning, time, onTimeUpdate]);
