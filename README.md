@@ -1,23 +1,79 @@
-# ✨ Welcome to Your Spark Template!
-You've just launched your brand-new Spark Template Codespace — everything’s fired up and ready for you to explore, build, and create with Spark!
+# 🔍 Word Search Puzzle Game
 
-This template is your blank canvas. It comes with a minimal setup to help you get started quickly with Spark development.
+A dynamic word search puzzle game where users create custom puzzles by entering their own words or selecting themed word lists, then find them in a generated grid by clicking and dragging across letters.
 
-🚀 What's Inside?
-- A clean, minimal Spark environment
-- Pre-configured for local development
-- Ready to scale with your ideas
-  
-🧠 What Can You Do?
+![Word Search Game](https://github.com/user-attachments/assets/1c0ac2c1-1d2b-4992-9ae5-be78945bd0fb)
 
-Right now, this is just a starting point — the perfect place to begin building and testing your Spark applications.
+## Features
 
-🧹 Just Exploring?
-No problem! If you were just checking things out and don’t need to keep this code:
+- **12 themed word lists** — Animals, Sports, Food, Nature, Space, Colors, Weather, Music, Ocean, Vehicles, Fruits, Countries
+- **Custom word input** — Enter your own words (3–15 words, 3–12 characters each)
+- **Interactive grid** — Click and drag to select words in 8 directions
+- **Timer** — Tracks completion time
+- **Leaderboard** — Persistent scores stored in localStorage
 
-- Simply delete your Spark.
-- Everything will be cleaned up — no traces left behind.
+## Getting Started
 
-📄 License For Spark Template Resources 
+### Prerequisites
 
-The Spark Template files and resources from GitHub are licensed under the terms of the MIT license, Copyright GitHub, Inc.
+- [Node.js](https://nodejs.org/) (v20 or later recommended)
+- npm
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Run the App
+
+```bash
+npm run dev
+```
+
+Open the URL shown in the terminal (typically `http://localhost:5173/`). Note: the `/word-search-puzzle-g/` base path is only used for the GitHub Pages production deployment, not during local development.
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+The output is written to the `dist/` directory.
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+### Testing
+
+There are currently no automated tests. To manually verify the app works:
+
+1. Start the dev server with `npm run dev`
+2. Select a themed puzzle (e.g. Animals) and confirm the grid generates
+3. Click and drag across letters to find a word — verify it highlights and appears as found in the Word Bank
+4. Complete a puzzle, enter a name in the completion dialog, and verify the score saves to the leaderboard
+
+## Deployment
+
+The app is deployed to **GitHub Pages** automatically on every push to `main` via the `.github/workflows/deploy.yml` workflow.
+
+## Tech Stack
+
+- React 19 + TypeScript
+- Vite 7
+- Tailwind CSS 4 + shadcn/ui
+- Framer Motion
+- Phosphor Icons
+
+## License
+
+Licensed under the terms of the MIT license.

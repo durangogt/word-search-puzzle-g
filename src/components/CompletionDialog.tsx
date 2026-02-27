@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Check, Plus, Trophy } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
-import { useKV } from '@github/spark/hooks';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { toast } from 'sonner';
 import type { LeaderboardEntry } from './Leaderboard';
 
@@ -30,7 +30,7 @@ export function CompletionDialog({
   wordCount 
 }: CompletionDialogProps) {
   const [name, setName] = useState('');
-  const [entries, setEntries] = useKV<LeaderboardEntry[]>('leaderboard-entries', []);
+  const [entries, setEntries] = useLocalStorage<LeaderboardEntry[]>('leaderboard-entries', []);
   const [saved, setSaved] = useState(false);
 
   const formatTime = (seconds: number): string => {
