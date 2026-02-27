@@ -31,7 +31,7 @@ npm install
 npm run dev
 ```
 
-Open the URL shown in the terminal (default Vite dev URL: `http://localhost:5173/`). The `/word-search-puzzle-g/` path is used for the GitHub Pages deployment.
+Open the URL shown in the terminal (typically `http://localhost:5173/`). Note: the `/word-search-puzzle-g/` base path is only used for the GitHub Pages production deployment, not during local development.
 
 ### Build for Production
 
