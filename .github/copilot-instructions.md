@@ -37,7 +37,7 @@ This is a **React + TypeScript** word search puzzle game built with **Vite**. Pl
 ## Commands
 
 - `npm run dev` — Start development server
-- `npm run build` — Type-check and build for production
+- `npm run build` — Build for production (no TypeScript type-checking)
 - `npm run lint` — Run ESLint
 - `npm run preview` — Preview production build locally
 

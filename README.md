@@ -31,7 +31,7 @@ npm install
 npm run dev
 ```
 
-Open the URL shown in the terminal (default: `http://localhost:5173/word-search-puzzle-g/`).
+Open the URL shown in the terminal (default Vite dev URL: `http://localhost:5173/`). The `/word-search-puzzle-g/` path is used for the GitHub Pages deployment.
 
 ### Build for Production
 
@@ -52,6 +52,15 @@ npm run preview
 ```bash
 npm run lint
 ```
+
+### Testing
+
+There are currently no automated tests. To manually verify the app works:
+
+1. Start the dev server with `npm run dev`
+2. Select a themed puzzle (e.g. Animals) and confirm the grid generates
+3. Click and drag across letters to find a word — verify it highlights and appears as found in the Word Bank
+4. Complete a puzzle, enter a name in the completion dialog, and verify the score saves to the leaderboard
 
 ## Deployment
 

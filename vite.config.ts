@@ -6,8 +6,8 @@ import { resolve } from 'path'
 const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname
 
 // https://vite.dev/config/
-export default defineConfig({
-  base: '/word-search-puzzle-g/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/word-search-puzzle-g/' : '/',
   plugins: [
     react(),
     tailwindcss(),
@@ -17,4 +17,4 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src')
     }
   },
-});
+}));
