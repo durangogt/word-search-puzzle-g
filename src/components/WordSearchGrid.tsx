@@ -16,11 +16,40 @@ interface WordSearchGridProps {
   foundWords: Set<string>;
 }
 
+function computeLinearSelection(start: Cell, end: Cell): Cell[] | null {
+  const rowDiff = end.row - start.row;
+  const colDiff = end.col - start.col;
+
+  const isHorizontal = rowDiff === 0 && colDiff !== 0;
+  const isVertical = colDiff === 0 && rowDiff !== 0;
+  const isDiagonal = Math.abs(rowDiff) === Math.abs(colDiff) && rowDiff !== 0;
+
+  if (!isHorizontal && !isVertical && !isDiagonal) return null;
+
+  const cells: Cell[] = [start];
+  const steps = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
+  const rowStep = rowDiff === 0 ? 0 : rowDiff / Math.abs(rowDiff);
+  const colStep = colDiff === 0 ? 0 : colDiff / Math.abs(colDiff);
+
+  for (let i = 1; i <= steps; i++) {
+    cells.push({
+      row: start.row + i * rowStep,
+      col: start.col + i * colStep,
+    });
+  }
+  return cells;
+}
+
 export function WordSearchGrid({ grid, placedWords, onWordFound, foundWords }: WordSearchGridProps) {
   const [selecting, setSelecting] = useState(false);
   const [currentSelection, setCurrentSelection] = useState<Cell[]>([]);
   const [foundPositions, setFoundPositions] = useState<Set<string>>(new Set());
   const gridRef = useRef<HTMLDivElement>(null);
+
+  // Keep a ref that always holds the latest state so native event handlers
+  // (added via useEffect) never read stale values from a closure.
+  const stateRef = useRef({ selecting, currentSelection, foundWords, foundPositions });
+  stateRef.current = { selecting, currentSelection, foundWords, foundPositions };
 
   const getCellKey = (row: number, col: number) => `${row}-${col}`;
 
@@ -45,34 +74,13 @@ export function WordSearchGrid({ grid, placedWords, onWordFound, foundWords }: W
       return;
     }
 
-    const start = currentSelection[0];
-    const rowDiff = row - start.row;
-    const colDiff = col - start.col;
-
-    const isHorizontal = rowDiff === 0 && colDiff !== 0;
-    const isVertical = colDiff === 0 && rowDiff !== 0;
-    const isDiagonal = Math.abs(rowDiff) === Math.abs(colDiff) && rowDiff !== 0;
-
-    if (!isHorizontal && !isVertical && !isDiagonal) {
-      return;
-    }
-
-    const newSelection: Cell[] = [start];
-    const steps = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
-    const rowStep = rowDiff === 0 ? 0 : rowDiff / Math.abs(rowDiff);
-    const colStep = colDiff === 0 ? 0 : colDiff / Math.abs(colDiff);
-
-    for (let i = 1; i <= steps; i++) {
-      newSelection.push({
-        row: start.row + i * rowStep,
-        col: start.col + i * colStep,
-      });
-    }
-
-    setCurrentSelection(newSelection);
+    const newSelection = computeLinearSelection(currentSelection[0], { row, col });
+    if (newSelection) setCurrentSelection(newSelection);
   };
 
-  const handleMouseUp = () => {
+  // Shared finalization logic used by both mouse and touch paths.
+  const finalizeSelection = useCallback(() => {
+    const { selecting, currentSelection, foundWords, foundPositions } = stateRef.current;
     if (!selecting) return;
 
     const foundWord = checkSelection(currentSelection, placedWords);
@@ -88,18 +96,68 @@ export function WordSearchGrid({ grid, placedWords, onWordFound, foundWords }: W
 
     setSelecting(false);
     setCurrentSelection([]);
-  };
+  }, [placedWords, onWordFound]);
 
+  // Global mouseup so dragging outside the grid still finalizes the selection.
   useEffect(() => {
-    const handleGlobalMouseUp = () => {
-      if (selecting) {
-        handleMouseUp();
-      }
+    document.addEventListener('mouseup', finalizeSelection);
+    return () => document.removeEventListener('mouseup', finalizeSelection);
+  }, [finalizeSelection]);
+
+  // Touch support: register non-passive listeners on the grid container so we
+  // can call preventDefault() and prevent the page from scrolling while the
+  // user is dragging to select a word.
+  useEffect(() => {
+    const gridEl = gridRef.current;
+    if (!gridEl) return;
+
+    const getCellFromPoint = (x: number, y: number): Cell | null => {
+      const el = document.elementFromPoint(x, y);
+      if (!el) return null;
+      const cellEl = (el as HTMLElement).closest('[data-cell]') as HTMLElement | null;
+      if (!cellEl) return null;
+      const row = parseInt(cellEl.dataset.row ?? '-1', 10);
+      const col = parseInt(cellEl.dataset.col ?? '-1', 10);
+      return row >= 0 && col >= 0 ? { row, col } : null;
     };
 
-    document.addEventListener('mouseup', handleGlobalMouseUp);
-    return () => document.removeEventListener('mouseup', handleGlobalMouseUp);
-  }, [selecting, currentSelection, foundWords]);
+    const onTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const cell = getCellFromPoint(touch.clientX, touch.clientY);
+      if (!cell) return;
+      e.preventDefault();
+      setSelecting(true);
+      setCurrentSelection([cell]);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (!stateRef.current.selecting) return;
+      const touch = e.touches[0];
+      const cell = getCellFromPoint(touch.clientX, touch.clientY);
+      if (!cell) return;
+      setCurrentSelection(prev => {
+        if (prev.length === 0) return [cell];
+        const newSelection = computeLinearSelection(prev[0], cell);
+        return newSelection ?? prev;
+      });
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+      finalizeSelection();
+    };
+
+    gridEl.addEventListener('touchstart', onTouchStart, { passive: false });
+    gridEl.addEventListener('touchmove', onTouchMove, { passive: false });
+    gridEl.addEventListener('touchend', onTouchEnd, { passive: false });
+
+    return () => {
+      gridEl.removeEventListener('touchstart', onTouchStart);
+      gridEl.removeEventListener('touchmove', onTouchMove);
+      gridEl.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [finalizeSelection]);
 
   const cellSize = grid.length > 15 ? 'sm' : grid.length > 12 ? 'md' : 'lg';
   const cellSizeClasses = {
@@ -125,6 +183,9 @@ export function WordSearchGrid({ grid, placedWords, onWordFound, foundWords }: W
             return (
               <motion.div
                 key={`${rowIndex}-${colIndex}`}
+                data-cell
+                data-row={rowIndex}
+                data-col={colIndex}
                 className={cn(
                   'flex items-center justify-center font-bold rounded-md cursor-pointer transition-all duration-150',
                   cellSizeClasses[cellSize],
@@ -134,7 +195,6 @@ export function WordSearchGrid({ grid, placedWords, onWordFound, foundWords }: W
                 )}
                 onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                 onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-                onTouchStart={() => handleMouseDown(rowIndex, colIndex)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 animate={isFound ? { scale: [1, 1.1, 1] } : {}}
